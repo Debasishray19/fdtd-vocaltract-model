@@ -8,16 +8,16 @@ clc;
 srate_mul = 15;
 fprintf("Enter the sample rate multiplier= %d\n", srate_mul);
 
-dur = 1;
+dur = 50e-3;
 fprintf("Enter the simulation duration= %f\n", dur);
 
 simulationType = 3;
 fprintf("Choose simulation type [1-Open Space 2-Regular Tube 3-Vowel Sound]= %d\n", simulationType);
 
-vowel = 1;
+vowel = 6;
 fprintf("Select tube type [0: \\no vowel\\ 1:\\a\\ 2:\\i\\ 3:\\u\\ 4:\\e\\ 5:\\o\\ 6:\\I\\]= %d\n", vowel);
 
-cross_sectionType = 2;
+cross_sectionType = 1;
 fprintf("Enter tube cross_section type [1: circular 2:elliptical 3:square]= %d\n", cross_sectionType);
 
 junctionType = 1;

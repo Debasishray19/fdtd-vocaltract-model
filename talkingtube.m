@@ -514,7 +514,7 @@ vb_alphaY = zeros(frameY-2, frameX-2, frameZ-2);
 vb_alphaZ = zeros(frameY-2, frameX-2, frameZ-2);
 
 % STEPXX: Introduce Dirichlet Boundary Condition
-if rad==2
+if rad==2 && simulationType~=1
     xNoPressure = tubeStart.startX + totalTubeLengthInCells;
     gridNoPressurePlane = PV_N(:, xNoPressure, :, 5);
     isNoPressureCell = (gridNoPressurePlane~=gridCellTypes.cell_noPressure);
@@ -583,18 +583,21 @@ end
 %% Deb: Just to verify if the geometry is correct or not
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % geometryArray = [approx. cross-sectional area, , , tube length]
-geometryArray = zeros(4,totalTubeLengthInCells);
-geometryArrayCounter = 1;
 
-for tubeAreaCounter = tubeStart.startX:tubeStart.startX + totalTubeLengthInCells-1
-    [gridPlaneProp, gridCellTypeInplane] = vt_findCellTypes(PV_N, gridCellTypes, tubeAreaCounter);
-    cellCountInVTContour = nnz(gridPlaneProp == gridCellTypeInplane.inVTContour);
-    geometryArray(1, geometryArrayCounter) = cellCountInVTContour*(dy*dz)*(100*100);
-    geometryArray(2, geometryArrayCounter) = currTubeSectionDiameterCells_SegmentCounter(1,geometryArrayCounter);
-    geometryArray(3, geometryArrayCounter) = currTubeSectionDiameterCells_SegmentCounter(2,geometryArrayCounter);
-    geometryArray(4, geometryArrayCounter) = geometryArrayCounter*dx;
-    
-    geometryArrayCounter = geometryArrayCounter+1;  
+if simulationType~=1
+    geometryArray = zeros(4,totalTubeLengthInCells);
+    geometryArrayCounter = 1;
+
+    for tubeAreaCounter = tubeStart.startX:tubeStart.startX + totalTubeLengthInCells-1
+        [gridPlaneProp, gridCellTypeInplane] = vt_findCellTypes(PV_N, gridCellTypes, tubeAreaCounter);
+        cellCountInVTContour = nnz(gridPlaneProp == gridCellTypeInplane.inVTContour);
+        geometryArray(1, geometryArrayCounter) = cellCountInVTContour*(dy*dz)*(100*100);
+        geometryArray(2, geometryArrayCounter) = currTubeSectionDiameterCells_SegmentCounter(1,geometryArrayCounter);
+        geometryArray(3, geometryArrayCounter) = currTubeSectionDiameterCells_SegmentCounter(2,geometryArrayCounter);
+        geometryArray(4, geometryArrayCounter) = geometryArrayCounter*dx;
+
+        geometryArrayCounter = geometryArrayCounter+1;  
+    end
 end
 
 % Open a new figure window to visualize the simulation
@@ -626,7 +629,9 @@ for T = 1:STEPS
     PV_NPlus1(2:frameY-1, 2:frameX-1, 2:frameZ-1, 1) = Pr_next(:,:,:);
     
     % Make pressure values of no_pressure cells as zeros
-    PV_NPlus1(:, xNoPressure, :, 1) = PV_NPlus1(:, xNoPressure, :, 1).*isNoPressureCell; 
+    if simulationType~=1
+        PV_NPlus1(:, xNoPressure, :, 1) = PV_NPlus1(:, xNoPressure, :, 1).*isNoPressureCell; 
+    end
     
     % STEP3: Calculate Vx_next, Vy_next and Vz_next
     % CxP [del.Px] = [dPx/dx] = Pr_right - Pr_curr
@@ -722,9 +727,10 @@ for T = 1:STEPS
     end
         
     % Save audio data as change in pressure
-    Pr_mouthEnd(T) = PV_NPlus1(listenerInfo.listenerY, listenerInfo.listenerX, listenerInfo.listenerZ, 1);
-    Pr_glottalEnd(T) = PV_NPlus1(sourceInfo.sourceY, sourceInfo.sourceX, sourceInfo.sourceZ, 1);
-    
+    if simulationType~=1
+        Pr_mouthEnd(T) = PV_NPlus1(listenerInfo.listenerY, listenerInfo.listenerX, listenerInfo.listenerZ, 1);
+        Pr_glottalEnd(T) = PV_NPlus1(sourceInfo.sourceY, sourceInfo.sourceX, sourceInfo.sourceZ, 1);
+    end
 %     % Stop the clock and record the time
 %     stopClock = toc;
 %     fprintf('Time taken for the step = %d\n', stopClock);
@@ -749,7 +755,7 @@ for T = 1:STEPS
     chech_xy_nan = isnan(test_2D_xy);
  
     wavePropagationVis = test_2D_xy;
-    wavePropagationVis(PV_N(:,:,tubeStart.startZ,5) == gridCellTypes.cell_wall) = vis_Boundary;
+    wavePropagationVis(PV_N(:,:,tubeStart.startZ,5) == gridCellTypes.cell_wall) = vis_Boundary; %[comment out this line for open space simulation]
    
     % Plot the pressure wave pripagation
     if plotting==1 && ~mod(T,1)
