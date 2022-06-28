@@ -17,7 +17,7 @@
 <br>[5] <a href ="https://dl.acm.org/citation.cfm?id=2767001">"Aerophones in flatland: Interactive Wave Simulation Of Wind Instruments"</a>  by Andrew Allen, Nikunj Raghuvansi.
 
 :golf: <b>Future work: </b>
-<br> - Implementation bent vocal tract geometries.
+<br> - Implementation of bent vocal tract geometries.
 <br> - Direct import of realistic vocal tract geometries from MRI images to the 3D FDTD orthogonal grid.
 <br> - Simulation of realistic vocal tract geometries.
 <br> - Implementation of side branches (e.g., lips, nasal tract, piriform fossa, etc.)
