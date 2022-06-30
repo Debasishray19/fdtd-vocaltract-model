@@ -17,7 +17,7 @@ fprintf("Choose simulation type [1-Open Space 2-Regular Tube 3-Vowel Sound]= %d\
 vowel = 2;
 fprintf("Select tube type [0: \\no vowel\\ 1:\\a\\ 2:\\i\\ 3:\\u\\ 4:\\e\\ 5:\\o\\ 6:\\I\\]= %d\n", vowel);
 
-cross_sectionType = 3;
+cross_sectionType = 2;
 fprintf("Enter tube cross_section type [1: circular 2:elliptical 3:square]= %d\n", cross_sectionType);
 
 junctionType = 1;
