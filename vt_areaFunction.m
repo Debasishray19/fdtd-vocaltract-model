@@ -1,4 +1,4 @@
-function [segment_length, tubeSectionArea_incm2] = vt_areaFunction(simulationType, vowel)
+function [segment_length, tubeLength, tubeSectionArea_incm2] = vt_areaFunction(simulationType, junctionType, vowel)
 
     if simulationType == 2
         tubeSectionArea_incm2 =  [0.97 0.97 0.97 0.97 ...
@@ -114,5 +114,21 @@ function [segment_length, tubeSectionArea_incm2] = vt_areaFunction(simulationTyp
                 disp('Error - Check your input');
                 return;  
         end    
+    end
+    
+    if junctionType ~= 1
+        switch vowel
+            case 1 %vowel /a/
+                segment_length = segment_length*0.932;
+            case 2 %vowel /i/
+                segment_length = segment_length*0.932;
+            case 3 %vowel /i/
+                segment_length = segment_length*0.89;
+            case 4 %vowel/e/
+                segment_length = segment_length*0.952;
+            case 5 %vowel /o/
+                segment_length = segment_length*0.88;
+        end
+        
     end
 end

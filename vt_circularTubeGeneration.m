@@ -8,7 +8,7 @@ function [simGridParam, PV_N, tubeStartArea, tubeStart, tubeEnd, totalTubeLength
     diameter_mul = 1;
     
     % STEP XX: Define tube geometry
-    [segment_length, tubeSectionArea_incm2] = vt_areaFunction(simulationType, vowel);
+    [segment_length, tubeLength, tubeSectionArea_incm2] = vt_areaFunction(simulationType, junctionType, vowel);
  
     % Tube section area in m^2
     tubeSectionArea_inm2 = tubeSectionArea_incm2.*(centimeter*centimeter);
@@ -26,7 +26,7 @@ function [simGridParam, PV_N, tubeStartArea, tubeStart, tubeEnd, totalTubeLength
 
     % Cross-sectional area at the tube start end
     % I didn't use "tubeSectionArea_inm2" directly because I wanted to use
-    % the derived area
+    % the derived area by using the derived diameter.
     tubeStartArea = pi*(tubeSectionOriginalDiameter(1)/2)^2;
 
     % Change the tubeSectionDiameterCells to 1 if it contains 0
@@ -52,19 +52,10 @@ function [simGridParam, PV_N, tubeStartArea, tubeStart, tubeEnd, totalTubeLength
             end    
         end
     end
-    
-    % STEP XX: Find the total tube length and calculate the percentage error 
-    % in the approximated tube length
-
+   
     % Number of cells for total tube length
     actualTubeLength = numSections*segment_length;
     totalTubeLengthInCells = round(actualTubeLength/ds);
-    approxTubeLength = totalTubeLengthInCells*ds;
-    
-    % Percentage error in total tube length
-    totalTubeLengthError = (approxTubeLength-actualTubeLength)/...
-                           (actualTubeLength);
-    fprintf('Approximated tube length percentage error = %.4f \n',totalTubeLengthError*100);
         
     if baffleSwitchFlag == 1
         % TO DO: Deb Implement the baffle condition
@@ -141,6 +132,37 @@ function [simGridParam, PV_N, tubeStartArea, tubeStart, tubeEnd, totalTubeLength
         [PV_N, currTubeSectionDiameterCells_SegmentCounter]...
             = vt_eccentricCircularContourGeneration(PV_N, numSections, totalTubeLengthInCells, tubeSectionDiameterCells, tubeCummSectionLength, boundaryInterpolation, tubeStart, pmlSwitch, pmlLayer, gridCellTypes, ds);
     end
+    
+    % STEPXX: Calculate tube midline length for eccentric geometry case
+    % This can be done by checking the midpoint along the y-axis
+    vtMidlineLength = 0;
+    for vtCrossSectionCounter = tubeStart.startX:tubeEnd.endX
+    	[gridPlaneProp, gridCellTypeInplane] = vt_findCellTypes(PV_N, gridCellTypes, vtCrossSectionCounter);
+    	 airCells = find(gridPlaneProp(:, tubeStart.startZ)==gridCellTypeInplane.inVTContour);
+    	currMidYPosition = (min(airCells) + max(airCells))/2;
+            
+        if vtCrossSectionCounter == tubeStart.startX
+            prevMidYPosition = currMidYPosition;
+        	continue;
+        end
+            
+        if prevMidYPosition == currMidYPosition
+        	vtMidlineLength = vtMidlineLength+ds;
+            prevMidYPosition = currMidYPosition;
+        else
+        	yPosDifferenceLen = abs(currMidYPosition-prevMidYPosition)*ds;
+        	vtMidlineLength = vtMidlineLength + sqrt(ds^2 + yPosDifferenceLen^2);
+            prevMidYPosition = currMidYPosition;
+        end
+    end
+        
+    finalvtMidlineLength = vtMidlineLength+ds;
+        
+    % Percentage error in total tube length
+    totalTubeLengthError = (finalvtMidlineLength-tubeLength)/...
+                           (tubeLength);
+    fprintf('Approximated tube length percentage error = %.4f \n',totalTubeLengthError*100);
+    
     % STEPXX: Define excitation cells
     % Check the grid cell types for the yz-plane that exists besides
     % (left-side) the tube starting point
@@ -181,14 +203,25 @@ function [simGridParam, PV_N, tubeStartArea, tubeStart, tubeEnd, totalTubeLength
     % Place two microphines:
     % 1. Near mouth-end [3mm inside of mouth] = listenerInfo
     % 2. Near glottal-end [Next to excitation cells] = sourceInfo
+    % Deb: We need to careful for centric and eccentric tube.
+    % First find the VT cross-section along the yz plane.
+    % Then find the y coordinate for source and listener by checking 
+    % the min/max positions.
     
-    % STEPXX: Determine the microphone/listener position near the mouth-end    
+    % STEPXX: Determine the microphone/listener position near the mouth-end
     listenerInfo.listenerX = tubeEnd.endX-micxdistanceInCellsFromMouthEnd;
-    listenerInfo.listenerY = tubeEnd.endY;
     listenerInfo.listenerZ = tubeEnd.endZ;
-    
+    [gridPlaneProp, gridCellTypeInplane] = vt_findCellTypes(PV_N, gridCellTypes, listenerInfo.listenerX);
+    airCells = find(gridPlaneProp(:, tubeEnd.endZ)==gridCellTypeInplane.inVTContour);
+    yPosition = (min(airCells) + max(airCells))/2;
+    listenerInfo.listenerY = yPosition;
+       
     % STEPXX: Determine the source position near the glottal-end  
     sourceInfo.sourceX = tubeStart.startX+1;
-    sourceInfo.sourceY = tubeStart.startY;
     sourceInfo.sourceZ = tubeStart.startZ;
+    [gridPlaneProp, gridCellTypeInplane] = vt_findCellTypes(PV_N, gridCellTypes, sourceInfo.sourceX);
+    airCells = find(gridPlaneProp(:, tubeStart.startZ)==gridCellTypeInplane.inVTContour);
+    yPosition = (min(airCells) + max(airCells))/2;
+    sourceInfo.sourceY = yPosition;
+    
 end

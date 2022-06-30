@@ -20,6 +20,10 @@ function plotFrequencyPhase(audioSignal, sourceSignal, srate)
     df = fs/n;
     f=0:df:fs;
     
+    f_eccen_cir = f;
+    finalTransferFunction_eccen_cir = finalTransferFunction;
+    save('circular_eccentric_a.mat','f_eccen_cir', 'finalTransferFunction_eccen_cir');
+    
     figure;
     plot(f,finalTransferFunction, 'LineWidth', 1); % plot Fourier Transform
     title('Amplitude Spectrum Analysis');

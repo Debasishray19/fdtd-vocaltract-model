@@ -496,6 +496,8 @@ rho_sqrC_dt       = kappa*dt;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PV_NPlus1  =  zeros(frameY, frameX, frameZ, 5);
 
+Ug_array = zeros(1, STEPS);
+
 CxVx = zeros(frameY-2, frameX-2, frameZ-2);
 CyVy = zeros(frameY-2, frameX-2, frameZ-2);
 CzVz = zeros(frameY-2, frameX-2, frameZ-2);
@@ -605,9 +607,6 @@ figure;
 
 for T = 1:STEPS
     
-%     % Start the clock
-%     tic;
-    
     % STEP1: Calculate [del.V] = [dVx/dx + dVy/dy + dVz/dz]
     % CxVx = dVx, where Vx = velocity along x direction = Vx_curr - Vx_left
     % CyVy = dVy, where Vy = velocity along y direction = Vy_Curr - Vy_down
@@ -653,7 +652,19 @@ for T = 1:STEPS
     % STEP4(i) : Inject excitation velocity
     % STEP4(ii): Enforce boundary condition 
     
-    exeCurrentVal = excitationV(T);
+    % [Note]: Inject excitation velocity as per the source type
+    if sourceModelType==5
+        % Retrive supra glottal presure next to the excitation cell
+        % cross-section
+        vf_flowParam.p1 = PV_NPlus1(tubeStart.startY, tubeStart.startX+1, tubeStart.startZ, 1);
+        
+        % Compute the updated vocalfold parameters
+        [vf_flowParam] = vf_TwoMassModel(srate, airParam, vf_structuralParam, vf_flowParam);
+        Ug_array(T) = vf_flowParam.ug_next;
+        exeCurrentVal = vf_flowParam.ug_curr/tubeStartArea;
+    else
+        exeCurrentVal = excitationV(T);
+    end
     
     % Update Vx, Vy and Vz components of the current cell with the
     % excitation velocity
@@ -731,10 +742,7 @@ for T = 1:STEPS
         Pr_mouthEnd(T) = PV_NPlus1(listenerInfo.listenerY, listenerInfo.listenerX, listenerInfo.listenerZ, 1);
         Pr_glottalEnd(T) = PV_NPlus1(sourceInfo.sourceY, sourceInfo.sourceX, sourceInfo.sourceZ, 1);
     end
-%     % Stop the clock and record the time
-%     stopClock = toc;
-%     fprintf('Time taken for the step = %d\n', stopClock);
-
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Deb: Uncomment the below section to verify the simulation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -757,7 +765,7 @@ for T = 1:STEPS
     wavePropagationVis = test_2D_xy;
     wavePropagationVis(PV_N(:,:,tubeStart.startZ,5) == gridCellTypes.cell_wall) = vis_Boundary; %[comment out this line for open space simulation]
    
-    % Plot the pressure wave pripagation
+%     % Plot the pressure wave pripagation
     if plotting==1 && ~mod(T,1)
        imagesc(wavePropagationVis,[-1000 4000]);
        title(['STEP NUMBER: ' num2str(T) ' OUT OF ' num2str(STEPS)]);
@@ -770,6 +778,8 @@ for T = 1:STEPS
 %     end  
 end
 
-if saveAudioData == 1
+if saveAudioData == 1 && sourceType ~=5
     save('audioData.mat', 'Pr_mouthEnd', 'Pr_glottalEnd', 'excitationV', 'srate', 'srate_mul');
+elseif saveAudioData == 1 && sourceType ==5
+    save('audioData.mat', 'Pr_mouthEnd', 'Pr_glottalEnd', 'srate', 'srate_mul');
 end

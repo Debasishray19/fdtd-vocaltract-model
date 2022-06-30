@@ -9,8 +9,8 @@ function  [PV_N, currTubeSectionDiameterCells_SegmentCounter]  = vt_eccentricCir
     tubeRadiusArray = zeros(1, totalTubeLengthInCells);
     
     % Set starting coordinte of tube mid-sagittal axis
+    % For eccentric geometry we don't need startY
     startX = tubeStart.startX;
-    startY = tubeStart.startY;
     startZ = tubeStart.startZ;
     
     % STEP1: Each tube segment consists of number of yz-planes. We first store the

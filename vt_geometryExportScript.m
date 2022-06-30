@@ -1,4 +1,7 @@
-% Generate geometry data
+% Generate geometry data 
+% Using this data in Artisynth [https://www.artisynth.org/Main/HomePage]
+% to visualize the 3D vocal tract model.
+
 vtModel_geometry = PV_N(:,:,:,5);
 simulationDomianSize = size(vtModel_geometry);
 
