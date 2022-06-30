@@ -19,7 +19,7 @@
 :golf: <b>Future work: </b>
 <br> - Implementation of bent vocal tract geometries.
 <br> - Direct import of realistic vocal tract geometries from MRI images to the 3D FDTD orthogonal grid.
-<br> - Simulation of realistic vocal tract geometries.
+<br> - Simulation of realistic vocal tract models.
 <br> - Implementation of side branches (e.g., lips, nasal tract, piriform fossa, etc.)
 <br> - Implementation of an accelerated 3D FDTD vocal tract model using modern GPUs [CUDA/OpenCL environment]
 
