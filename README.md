@@ -8,6 +8,7 @@
 :video_game: <b>How to run the simulation:</b>
 <br> - To simulate the articulatory model, use the main.m file in the MATLAB environemnt.
 <br> - For transfer function analysis, use the plotFrequencyPhase.m file.
+<br> - To geneate audio samples, use the generateAudio.m file.
 
 :books: <b>References:</b>
 <br>[1] <a href ="https://ieeexplore.ieee.org/document/6772490">"Synthesis of voiced sounds from a two-mass model of the vocal cords"</a>  by K. Ishizaka, J. L. Flanagan.
