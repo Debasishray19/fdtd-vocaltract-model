@@ -5,7 +5,7 @@
 <img src="img/rotating_tract.gif" width="500" height="400">
 <img src="img/3d_geometries.JPG" width="500" height="300">
 
-:video_game: <b>How to run the simulation:</b>
+:video_game: <b>Start the simulator:</b>
 <br> - To simulate the articulatory model, use the main.m file in the MATLAB environemnt.
 <br> - For transfer function analysis, use the plotFrequencyPhase.m file.
 <br> - To geneate audio samples, use the generateAudio.m file.
