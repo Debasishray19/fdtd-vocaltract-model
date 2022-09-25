@@ -11,11 +11,29 @@
 <br> - To geneate audio samples, use the generateAudio.m file.
 
 :books: <b>References:</b>
-<br>[1] <a href ="https://ieeexplore.ieee.org/document/6772490">"Synthesis of voiced sounds from a two-mass model of the vocal cords"</a>  by K. Ishizaka, J. L. Flanagan.
-<br>[2]<a href="https://asa.scitation.org/doi/10.1121/1.2805683">"Comparision of magnetic imaging-based vocal tract area functions obtained from the same speaker in 1994 and 2002"</a> by Brad H. Story
-<br>[3]<a href="https://asa.scitation.org/doi/full/10.1121/1.3502470">"Acoustic Analysis of the vocal tract during vowel production by finite-difference time-domain method"</a> by Hironori Takemoto and Parham Mokhtari.
-<br>[4]<a href = "https://www.jstage.jst.go.jp/article/ast/23/1/23_1_40/_article/-char/ja/">"Visualization of sound propagation and scattering in rooms"</a> by Takatoshi Yokota, Shinichi Sakamoto and Hideki Tachibana
-<br>[5] <a href ="https://dl.acm.org/citation.cfm?id=2767001">"Aerophones in flatland: Interactive Wave Simulation Of Wind Instruments"</a>  by Andrew Allen, Nikunj Raghuvansi.
+<br>If you use the code for your research work, please cite the following papers -
+<br>[1] <a href ="https://www.isca-speech.org/archive/interspeech_2022/mohapatra22_interspeech.html">"Three-dimensional finite-difference time-domain acoustic analysis of simplified vocal tract shapes"</a>  by Mohapatra et al.
+```
+@inproceedings{mohapatra22_interspeech,
+  author={Debasish Mohapatra and Mario Fleischer and Victor Zappi and Peter Birkholz and Sidney Fels},
+  title={{Three-dimensional finite-difference time-domain acoustic analysis of simplified vocal tract shapes}},
+  year=2022,
+  booktitle={Proc. Interspeech 2022},
+  pages={764--768},
+  doi={10.21437/Interspeech.2022-10649}
+}
+```
+<br>[2] <a href ="https://www.isca-speech.org/archive/interspeech_2019/mohapatra19_interspeech.html">"An Extended Two-Dimensional Vocal Tract Model for Fast Acoustic Simulation of Single-Axis Symmetric Three-Dimensional Tubes"</a>  by Mohapatra et al.
+```
+@inproceedings{mohapatra19_interspeech,
+  author={Debasish Ray Mohapatra and Victor Zappi and Sidney Fels},
+  title={{An Extended Two-Dimensional Vocal Tract Model for Fast Acoustic Simulation of Single-Axis Symmetric Three-Dimensional Tubes}},
+  year=2019,
+  booktitle={Proc. Interspeech 2019},
+  pages={3760--3764},
+  doi={10.21437/Interspeech.2019-1764}
+}
+```
 
 :golf: <b>Future work: </b>
 <br> - Implementation of bent vocal tract geometries having simplified cross-sections.
